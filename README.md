@@ -2,19 +2,6 @@
 
 A local voice-assistant app for a Behringer WING Rack, designed to use Dante Virtual Soundcard (DVS) and the existing `wing-rack-assistant` MCP gateway. This project can assemble **one installer for Intel and Apple Silicon Macs**. It is not a single universal2 executable: it includes two separately built `.app` bundles and the installer selects the matching native build on the target Mac.
 
-## Build one installer for both Mac architectures (from your Intel Mac)
-
-Use GitHub Actions to build both native variants in the cloud; you do **not** need an Apple Silicon Mac to build the installer.
-
-1. Follow [`GITHUB-ACTIONS-BUILD.md`](GITHUB-ACTIONS-BUILD.md) to create a private GitHub repository and push this project from your Intel Mac.
-2. In GitHub, open **Actions** → **Build WING Voice Assistant Universal Installer** → **Run workflow**.
-3. Wait for the Intel build, Apple Silicon build, and packaging job to complete.
-4. Download the `WING-Voice-Assistant-Universal-Installer` artifact from the completed run. It contains `WING-Voice-Assistant-Universal.pkg`.
-5. Copy that installer to the church Mac and install it there.
-
-The workflow uses separate hosted macOS runners for Intel (`macos-15-intel`) and Apple Silicon (`macos-15`), then packages both native `.app` bundles into one `.pkg`. The resulting package is not code-signed or notarized by default. It has not been tested against physical WING/Dante hardware. See `GITHUB-ACTIONS-BUILD.md` for details, billing notes, and safety checks.
-
-**This is a setup-ready starter, not a verified live-console integration.** You must select the correct DVS CoreAudio devices, bundle the open-source Vosk English model for constrained `Wing` wake detection, configure the MCP gateway path and exact tool schemas, verify the six IEM bus mappings, and test at low levels before enabling writes. It has not been tested against your physical mixer.
 
 ## Safety model
 
