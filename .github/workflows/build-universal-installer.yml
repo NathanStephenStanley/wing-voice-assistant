@@ -1,0 +1,120 @@
+name: Build WING Voice Assistant Universal Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: Run the Python test suite before packaging
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-native-app:
+    name: Build ${{ matrix.label }} app
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Intel
+            runner: macos-15-intel
+            folder: Intel
+            artifact: wing-app-intel
+          - label: Apple Silicon
+            runner: macos-15
+            folder: AppleSilicon
+            artifact: wing-app-applesilicon
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Make build scripts executable
+        run: chmod +x ./*.command
+
+      - name: Run tests
+        if: ${{ inputs.run_tests }}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pytest
+          python -m pytest -q
+
+      - name: Build bundled app and speech models
+        env:
+          BUILD_ARCH_ONLY: '1'
+        run: ./build-all-in-one-pkg.command
+
+      - name: Verify build architecture and payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACTUAL="$(uname -m)"
+          if [[ "${{ matrix.folder }}" == "Intel" ]]; then
+            [[ "$ACTUAL" == "x86_64" ]]
+            EXPECTED="$ACTUAL"
+          else
+            [[ "$ACTUAL" == "arm64" ]]
+            EXPECTED="$ACTUAL"
+          fi
+          APP="universal-build/architectures/${{ matrix.folder }}/WING Voice Assistant.app"
+          test -d "$APP"
+          test -f "universal-build/architectures/${{ matrix.folder }}/build-architecture.txt"
+          [[ "$(cat "universal-build/architectures/${{ matrix.folder }}/build-architecture.txt")" == "$EXPECTED" ]]
+          /usr/bin/file "$APP/Contents/MacOS/WING Voice Assistant" || true
+          du -sh "$APP"
+
+      - name: Upload native app payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            universal-build/architectures/${{ matrix.folder }}/WING Voice Assistant.app/**
+            universal-build/architectures/${{ matrix.folder }}/build-architecture.txt
+          if-no-files-found: error
+          retention-days: 2
+
+  package-installer:
+    name: Assemble universal .pkg
+    needs: build-native-app
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Download Intel app
+        uses: actions/download-artifact@v4
+        with:
+          name: wing-app-intel
+          path: universal-build/architectures/Intel
+
+      - name: Download Apple Silicon app
+        uses: actions/download-artifact@v4
+        with:
+          name: wing-app-applesilicon
+          path: universal-build/architectures/AppleSilicon
+
+      - name: Assemble installer
+        run: |
+          chmod +x ./*.command
+          ./build-universal-installer.command
+          test -s dist/WING-Voice-Assistant-Universal.pkg
+          pkgutil --check-signature dist/WING-Voice-Assistant-Universal.pkg || true
+          ls -lh dist/WING-Voice-Assistant-Universal.pkg
+
+      - name: Upload finished installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: WING-Voice-Assistant-Universal-Installer
+          path: dist/WING-Voice-Assistant-Universal.pkg
+          if-no-files-found: error
+          retention-days: 14
