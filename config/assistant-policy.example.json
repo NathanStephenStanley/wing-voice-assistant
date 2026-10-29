@@ -1,0 +1,10 @@
+{
+  "wakeWord": "Wing",
+  "ignoreWakeWhileBusy": true,
+  "queueCommands": false,
+  "confirmEveryLiveWrite": true,
+  "undoOnlyLastVerifiedChange": true,
+  "undoMaxAgeSeconds": 300,
+  "meterAlertsReadOnly": true,
+  "automaticCorrections": false
+}

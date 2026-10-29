@@ -1,0 +1,10 @@
+{
+  "profiles": [
+    {"label": "Keys 1", "busIndex": null},
+    {"label": "Drums", "busIndex": null},
+    {"label": "Acoustic", "busIndex": null},
+    {"label": "IEM 4", "busIndex": null},
+    {"label": "IEM 5", "busIndex": null},
+    {"label": "IEM 6", "busIndex": null}
+  ]
+}

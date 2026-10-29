@@ -1,0 +1,30 @@
+{
+  "inputDeviceContains": "Dante",
+  "inputChannels": [
+    0
+  ],
+  "inputSampleRate": 48000,
+  "outputDeviceContains": "Dante",
+  "outputChannels": [
+    0
+  ],
+  "outputSampleRate": 48000,
+  "mcpGatewayPath": "/ABSOLUTE/PATH/TO/wing-rack-assistant",
+  "writesEnabled": false,
+  "whisperModel": "assets/whisper-base.en",
+  "recordingMaxSeconds": 8,
+  "silenceEndSeconds": 1.0,
+  "speechRmsThreshold": 0.008,
+  "wakeSensitivity": 0.65,
+  "confirmationTimeoutSeconds": 12,
+  "maxRelativeStepDb": 2.0,
+  "maxAbsoluteFaderDb": 6.0,
+  "meterMonitoringEnabled": false,
+  "meterPollSeconds": 2.0,
+  "meterThresholdsDbfs": {
+    "clipAtOrAbove": -1.0,
+    "noSignalAtOrBelow": -60.0,
+    "lowSignalAtOrBelow": -50.0
+  },
+  "wakeModelPath": "assets/vosk-model-small-en-us-0.15"
+}

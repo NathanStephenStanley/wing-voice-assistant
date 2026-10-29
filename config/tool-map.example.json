@@ -1,0 +1,16 @@
+{
+  "statusRead": null,
+  "meterRead": null,
+  "busFaderRead": null,
+  "busFaderSet": null,
+  "busMuteRead": null,
+  "busMuteSet": null,
+  "notes": "Each configured action must be an object: {\"tool\": \"EXACT_TOOL_NAME\", \"args\": {\"EXACT_ARGUMENT_NAME\": \"$busIndex\"}, \"valuePath\": \"content.0.text\"}. Use exact names/argument keys from inspect-tools output. For reads, valuePath must identify the numeric dB value or boolean mute state in the MCP result. For meterRead, valuePath must identify a numeric value or list of numeric dBFS values. The example path is only a syntax illustration; it may not match your tool response.",
+  "exampleSyntaxOnly": {
+    "busFaderRead": {"tool": "REPLACE_WITH_EXACT_READ_TOOL", "args": {"bus_index": "$busIndex"}, "valuePath": "structuredContent.faderDb"},
+    "busFaderSet": {"tool": "REPLACE_WITH_EXACT_SET_TOOL", "args": {"bus_index": "$busIndex", "level_db": "$levelDb"}},
+    "busMuteRead": {"tool": "REPLACE_WITH_EXACT_MUTE_READ_TOOL", "args": {"bus_index": "$busIndex"}, "valuePath": "structuredContent.muted"},
+    "busMuteSet": {"tool": "REPLACE_WITH_EXACT_MUTE_SET_TOOL", "args": {"bus_index": "$busIndex", "muted": "$muted"}},
+    "meterRead": {"tool": "REPLACE_WITH_EXACT_METER_TOOL", "args": {}, "valuePath": "structuredContent.peaksDbfs"}
+  }
+}
